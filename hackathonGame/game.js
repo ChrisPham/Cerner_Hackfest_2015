@@ -24,6 +24,7 @@ window.onload = function() {
 			game.scale.setScreenSize(true);
 			game.load.image("ninja", "ninja.png"); 
 			game.load.image("pole", "pole.png");
+			game.load.image("ground","floor.png");
                game.load.image("powerbar", "powerbar.png");
 		},
 		create:function(){
@@ -46,9 +47,20 @@ window.onload = function() {
 			ninja.body.gravity.y = ninjaGravity;
 			game.input.onDown.add(prepareToJump, this);
 			addPole(80);
+			
+			platforms = game.add.group();
+			//  We will enable physics for any object that is created in this group
+			platforms.enableBody = true;
+			// Here we create the ground.
+			var ground = platforms.create(0, game.world.height - 64, 'ground');
+			//  Scale it to fit the width of the game (the original sprite is 400x32 in size)
+			//ground.scale.setTo(2, 2);
+			//  This stops it from falling away when you jump on it
+			ground.body.immovable = true;
 		},
 		update:function(){
 			game.physics.arcade.collide(ninja, poleGroup, checkLanding);
+			game.physics.arcade.collide(ninja, platforms);
 			if(ninja.y>game.height){
 				die();
 			}
