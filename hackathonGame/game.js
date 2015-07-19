@@ -27,7 +27,8 @@ window.onload = function() {
 		preload:function(){
 			game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 			game.scale.setScreenSize(true);
-			game.load.image("ninja", "ninja.png"); 
+			game.load.image("ninja", "ninja.png");
+			game.load.image("ball", "ball.png");
 			game.load.image("pole", "pole.png");
 			game.load.image("ground","floor.png");
              game.load.image("powerbar", "powerbar.png");
@@ -55,9 +56,14 @@ window.onload = function() {
 			ninja = game.add.sprite(game.width/2,0,"dude");
 			ninja.anchor.set(0.5);
 			ninja.lastPole = 1;
-			game.physics.arcade.enable(ninja);              
+			game.physics.arcade.enable(ninja);
 			ninja.body.gravity.y = ninjaGravity;
 			game.input.onDown.add(prepareToJump, this);
+			
+			ball = game.add.sprite(game.width/2,0,"ball");
+			game.physics.arcade.enable(ball);
+			ball.body.gravity.y = 800;
+			
 			addPole(80);
 			game.time.events.loop(lowerObstacleInterval, addObstacleL);
             game.time.events.loop(upperObstacleInterval, addObstacleH);
@@ -79,6 +85,7 @@ window.onload = function() {
 			//game.physics.arcade.collide(ninja, poleGroup, checkLanding);
             game.physics.arcade.collide(ninja, obstacleGroup, die);
 			game.physics.arcade.collide(ninja, platforms, onGround);
+			game.physics.arcade.collide(ball, platforms, bounce);
 			if(ninja.y>game.height){
 				die();
 			}
@@ -87,6 +94,9 @@ window.onload = function() {
 	}     
      game.state.add("Play",play);
      game.state.start("Play");
+	function bounce(){
+		ball.body.velocity.y = -800;
+	}
 	function updateScore(){
 		scoreText.text = "Score: "+score+"\nBest: "+topScore;	
 	}     
