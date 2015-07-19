@@ -22,6 +22,8 @@ window.onload = function() {
      var maxPoleGap = 300; 
      var ninjaJumping;
      var ninjaFallingDown;     
+     var obstacleSpeed = -200;
+     var poleSpeed = -550;
      var play = function(game){}     
      play.prototype = {
 		preload:function(){
@@ -47,7 +49,7 @@ window.onload = function() {
 			updateScore();
 			game.stage.backgroundColor = "#87CEEB";
 			game.physics.startSystem(Phaser.Physics.ARCADE);
-			ninja = game.add.sprite(game.width/2,0,"dude");
+			ninja = game.add.sprite(game.width/2.15,0,"dude");
 			ninja.anchor.set(0.5);
 			ninja.lastPole = 1;
 			game.physics.arcade.enable(ninja);              
@@ -78,6 +80,12 @@ window.onload = function() {
 				die();
 			}
 			ninja.animations.play('right');
+			if(score % 5) {
+				increaseObstacleSpeed();
+			}
+			if(score % 50) {
+				increaseObstacleCount();
+			}
 		}
 	}     
      game.state.add("Play",play);
@@ -134,9 +142,20 @@ window.onload = function() {
 		game.add.existing(obstacle);
 		obstacleGroup.add(obstacle);
 	}
+	function increaseObstacleCount() {
+
+	}
+	function increaseObstacleSpeed() {
+		if(obstacleSpeed > -600) {
+			obstacleSpeed -= .2;
+			poleSpeed -= .2;
+		}
+	}
 	function die(){
 		localStorage.setItem("topFlappyScore",Math.max(score,topScore));	
 		game.state.start("Play");
+		obstacleSpeed = -200;
+		poleSpeed = -550;
 	}
 	function onGround(n,g) {
 		if(n.y <= g.y + n.y/2) {
@@ -186,7 +205,7 @@ window.onload = function() {
 	Pole.prototype.constructor = Pole;
 	Pole.prototype.update = function() {
           // if(ninjaJumping && !ninjaFallingDown){
-               this.body.velocity.x = -550;
+               this.body.velocity.x = poleSpeed;
           // }
           // else{
           //      this.body.velocity.x = 0
@@ -200,7 +219,7 @@ window.onload = function() {
 		Phaser.Sprite.call(this, game, x, y, "ninja");
 		game.physics.enable(this, Phaser.Physics.ARCADE);
 		this.body.immovable = true;
-        this.body.velocity.x = -200;
+        this.body.velocity.x = obstacleSpeed;
         this.giveScore = true;
 	};
 	
