@@ -32,6 +32,11 @@ window.onload = function() {
 			game.load.image("ground","floor.png");
              game.load.image("powerbar", "powerbar.png");
              game.load.spritesheet('dude', 'assets/dude.png', 58, 87);
+               game.load.image("powerbar", "powerbar.png");
+            game.load.image("person1","person1.png");
+            game.load.image("person2","sonic.png");
+            game.load.image("couch","couch.png");
+            game.load.image("test","bullet1.png");
 		},
 		create:function(){
 			ninjaJumping = false;
@@ -125,12 +130,23 @@ window.onload = function() {
 		}
 	}
     function addObstacleL(){
-		var obstacle = new Obstacle(game,1000,game.world.height - 95);
-		game.add.existing(obstacle);
-		obstacleGroup.add(obstacle);
+        var obstacleNumber = game.rnd.between(1,2);
+		if (obstacleNumber == 2) {
+            var obstacle = new Obstacle(game,1000,game.world.height - 75, obstacleNumber);
+            game.add.existing(obstacle);
+            obstacleGroup.add(obstacle);
+            var obstacle2 = new Obstacle(game,945,game.world.height - 78, obstacleNumber + 1);
+            game.add.existing(obstacle2);
+            obstacleGroup.add(obstacle2);
+        } else {
+            var obstacle = new Obstacle(game,1000,game.world.height - 95, obstacleNumber);
+            game.add.existing(obstacle);
+            obstacleGroup.add(obstacle);
+        }
 	}
     function addObstacleH(){
-		var obstacle = new Obstacle(game,1500,200);
+        var obstacleNumber = 4/*game.rnd.between(1,2)*/;
+		var obstacle = new Obstacle(game,1500,game.rnd.between(150, 250), obstacleNumber);
 		game.add.existing(obstacle);
 		obstacleGroup.add(obstacle);
 	}
@@ -196,9 +212,17 @@ window.onload = function() {
 			addNewPoles();
 		}
 	}
-    Obstacle = function (game, x, y) {
-		Phaser.Sprite.call(this, game, x, y, "ninja");
-		game.physics.enable(this, Phaser.Physics.ARCADE);
+    Obstacle = function (game, x, y, obstacleNumber) {
+		if (obstacleNumber == 1) {
+            Phaser.Sprite.call(this, game, x, y - 10, "couch");
+        } else if (obstacleNumber == 2) {
+            Phaser.Sprite.call(this, game, x, y - 50, "person1");
+        } else if (obstacleNumber == 3) {
+            Phaser.Sprite.call(this, game, x, y - 50, "person2");
+        } else if (obstacleNumber == 4) {
+            Phaser.Sprite.call(this, game, x, y, "test");
+        }
+        game.physics.enable(this, Phaser.Physics.ARCADE);
 		this.body.immovable = true;
         this.body.velocity.x = -200;
         this.giveScore = true;
