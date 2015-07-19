@@ -13,6 +13,7 @@ window.onload = function() {
      var powerTween;
      var placedPoles;
 	var poleGroup; 
+	var platforms;
      var minPoleGap = 100;
      var maxPoleGap = 300; 
      var ninjaJumping;
@@ -40,7 +41,7 @@ window.onload = function() {
 			updateScore();
 			game.stage.backgroundColor = "#87CEEB";
 			game.physics.startSystem(Phaser.Physics.ARCADE);
-			ninja = game.add.sprite(80,0,"ninja");
+			ninja = game.add.sprite(game.width/2,0,"ninja");
 			ninja.anchor.set(0.5);
 			ninja.lastPole = 1;
 			game.physics.arcade.enable(ninja);              
@@ -54,13 +55,13 @@ window.onload = function() {
 			// Here we create the ground.
 			var ground = platforms.create(0, game.world.height - 64, 'ground');
 			//  Scale it to fit the width of the game (the original sprite is 400x32 in size)
-			//ground.scale.setTo(2, 2);
+			ground.scale.setTo(2, 3);
 			//  This stops it from falling away when you jump on it
 			ground.body.immovable = true;
 		},
 		update:function(){
 			game.physics.arcade.collide(ninja, poleGroup, checkLanding);
-			game.physics.arcade.collide(ninja, platforms);
+			game.physics.arcade.collide(ninja, platforms, onGround);
 			if(ninja.y>game.height){
 				die();
 			}
@@ -114,6 +115,19 @@ window.onload = function() {
 		localStorage.setItem("topFlappyScore",Math.max(score,topScore));	
 		game.state.start("Play");
 	}
+	function onGround(n,g) {
+		if(n.y <= g.y + n.y/2) {
+			if(Math.abs(border)>20){
+				var border = n.x-g.x
+				n.body.velocity.x=border*2;
+				n.body.velocity.y=-200;	
+			}
+			if(ninjaJumping){
+               	ninjaJumping = false;              
+               	game.input.onDown.add(prepareToJump, this);
+          	}
+		}
+	}
 	function checkLanding(n,p){
 		if(p.y>=n.y+n.height/2){
 			var border = n.x-p.x
@@ -148,12 +162,12 @@ window.onload = function() {
 	Pole.prototype = Object.create(Phaser.Sprite.prototype);
 	Pole.prototype.constructor = Pole;
 	Pole.prototype.update = function() {
-          if(ninjaJumping && !ninjaFallingDown){
+          // if(ninjaJumping && !ninjaFallingDown){
                this.body.velocity.x = ninjaJumpPower;
-          }
-          else{
-               this.body.velocity.x = 0
-          }
+          // }
+          // else{
+          //      this.body.velocity.x = 0
+          // }
 		if(this.x<-this.width){
 			this.destroy();
 			addNewPoles();
