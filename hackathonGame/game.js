@@ -26,7 +26,10 @@ window.onload = function() {
 			game.load.image("ninja", "ninja.png"); 
 			game.load.image("pole", "pole.png");
 			game.load.image("ground","floor.png");
-               game.load.image("powerbar", "powerbar.png");
+            game.load.image("powerbar", "powerbar.png");
+            game.load.image('ground', 'assets/platform.png');
+    		game.load.image('star', 'assets/star.png');
+    		game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
 		},
 		create:function(){
 			ninjaJumping = false;
@@ -41,12 +44,16 @@ window.onload = function() {
 			updateScore();
 			game.stage.backgroundColor = "#87CEEB";
 			game.physics.startSystem(Phaser.Physics.ARCADE);
-			ninja = game.add.sprite(game.width/2,0,"ninja");
+			ninja = game.add.sprite(game.width/2,0,"dude");
 			ninja.anchor.set(0.5);
 			ninja.lastPole = 1;
 			game.physics.arcade.enable(ninja);              
 			ninja.body.gravity.y = ninjaGravity;
-			game.input.onDown.add(prepareToJump, this);
+			//game.input.onDown.add(prepareToJump, this);
+			ninja.body.collideWorldBounds = true;
+			//  Our two animations, walking left and right.
+		    ninja.animations.add('left', [0, 1, 2, 3], 10, true);
+		    ninja.animations.add('right', [5, 6, 7, 8], 10, true);
 			addPole(80);
 			
 			platforms = game.add.group();
@@ -65,6 +72,36 @@ window.onload = function() {
 			if(ninja.y>game.height){
 				die();
 			}
+			ninja.body.velocity.x = 0;
+
+			cursors = game.input.keyboard.createCursorKeys();
+			if (cursors.left.isDown)
+		    {
+		        //  Move to the left
+		        ninja.body.velocity.x = -200;
+
+		        ninja.animations.play('left');
+		    }
+		    else if (cursors.right.isDown)
+		    {
+		        //  Move to the right
+		        ninja.body.velocity.x = 200;
+
+		        ninja.animations.play('right');
+		    }
+		    else
+		    {
+		        //  Stand still
+		        ninja.animations.stop();
+
+		        ninja.frame = 4;
+		    }
+
+		    //  Allow the player to jump if they are touching the ground.
+		    if (cursors.up.isDown && ninja.body.touching.down)
+		    {
+		        ninja.body.velocity.y = -600;
+		    }
 		}
 	}     
      game.state.add("Play",play);
@@ -72,26 +109,7 @@ window.onload = function() {
 	function updateScore(){
 		scoreText.text = "Score: "+score+"\nBest: "+topScore;	
 	}     
-	function prepareToJump(){
-		if(ninja.body.velocity.y==0){
-	          powerBar = game.add.sprite(ninja.x,ninja.y-50,"powerbar");
-	          powerBar.width = 0;
-	          powerTween = game.add.tween(powerBar).to({
-			   width:100
-			}, 1000, "Linear",true); 
-	          game.input.onDown.remove(prepareToJump, this);
-	          game.input.onUp.add(jump, this);
-          }        	
-	}     
-     function jump(){
-          ninjaJumpPower= -powerBar.width*3-100
-          powerBar.destroy();
-          game.tweens.removeAll();
-          ninja.body.velocity.y = ninjaJumpPower*2;
-          ninjaJumping = true;
-          powerTween.stop();
-          game.input.onUp.remove(jump, this);
-     }     
+	  
      function addNewPoles(){
      	var maxPoleX = 0;
 		poleGroup.forEach(function(item) {
@@ -163,7 +181,7 @@ window.onload = function() {
 	Pole.prototype.constructor = Pole;
 	Pole.prototype.update = function() {
           // if(ninjaJumping && !ninjaFallingDown){
-               this.body.velocity.x = ninjaJumpPower;
+        this.body.velocity.x = -175;
           // }
           // else{
           //      this.body.velocity.x = 0
