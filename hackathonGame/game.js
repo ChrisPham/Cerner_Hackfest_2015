@@ -40,6 +40,7 @@ window.onload = function() {
             game.load.image("person2","sonic.png");
             game.load.image("couch","couch.png");
             game.load.image("test","bullet1.png");
+            game.load.image("background", "background.png");
 		},
 		create:function(){
 			ninjaJumping = false;
@@ -54,6 +55,7 @@ window.onload = function() {
 			});
 			updateScore();
 			game.stage.backgroundColor = "#87CEEB";
+            //background = game.add.tileSprite(0, 0, 1000, 600, "background");
 			game.physics.startSystem(Phaser.Physics.ARCADE);
 			ninja = game.add.sprite(game.width/2.15,0,"dude");
 			ninja.anchor.set(0.5);
