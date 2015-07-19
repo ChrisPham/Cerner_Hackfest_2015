@@ -68,7 +68,7 @@ window.onload = function() {
 			ground.body.immovable = true;
 		},
 		update:function(){
-			game.physics.arcade.collide(ninja, poleGroup, checkLanding);
+			//game.physics.arcade.collide(ninja, poleGroup, checkLanding);
             game.physics.arcade.collide(ninja, obstacleGroup, die);
 			game.physics.arcade.collide(ninja, platforms, onGround);
 			if(ninja.y>game.height){
@@ -182,7 +182,7 @@ window.onload = function() {
 	Pole.prototype.constructor = Pole;
 	Pole.prototype.update = function() {
           // if(ninjaJumping && !ninjaFallingDown){
-               this.body.velocity.x = ninjaJumpPower;
+               this.body.velocity.x = -550;
           // }
           // else{
           //      this.body.velocity.x = 0
@@ -196,19 +196,19 @@ window.onload = function() {
 		Phaser.Sprite.call(this, game, x, y, "ninja");
 		game.physics.enable(this, Phaser.Physics.ARCADE);
 		this.body.immovable = true;
-        this.body.velocity.x = -100;
-		//this.giveScore = true;	
+        this.body.velocity.x = -200;
+        this.giveScore = true;
 	};
 	
 	Obstacle.prototype = Object.create(Phaser.Sprite.prototype);
 	Obstacle.prototype.constructor = Obstacle;
 	
 	Obstacle.prototype.update = function() {
-		/*if(this.x+this.width<ninja.x && this.giveScore){
-			score+=0.5;
+		if(this.x+this.width<ninja.x && this.giveScore){
+			score++;
 			updateScore();
 			this.giveScore = false;
-		}*/
+		}
 		if(this.x<-this.width){
 			this.destroy();
 		}
