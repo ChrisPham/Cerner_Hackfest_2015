@@ -65,10 +65,6 @@ window.onload = function() {
 			ninja.body.gravity.y = ninjaGravity;
 			game.input.onDown.add(prepareToJump, this);
 			
-			ball = game.add.sprite(game.width/2,0,"ball");
-			game.physics.arcade.enable(ball);
-			ball.body.gravity.y = 800;
-			
 			addPole(80);
 			game.time.events.loop(lowerObstacleInterval, addObstacleL);
             game.time.events.loop(upperObstacleInterval, addObstacleH);
@@ -77,7 +73,6 @@ window.onload = function() {
             ninja.scale.setTo(.65,.65);
 			addObstacleL();
             addObstacleH();
-            addObstacleBall();
 			platforms = game.add.group();
 			//  We will enable physics for any object that is created in this group
 			platforms.enableBody = true;
@@ -92,7 +87,6 @@ window.onload = function() {
 			//game.physics.arcade.collide(ninja, poleGroup, checkLanding);
             game.physics.arcade.collide(ninja, obstacleGroup, die);
 			game.physics.arcade.collide(ninja, platforms, onGround);
-			game.physics.arcade.collide(ball, platforms, bounce);
             game.physics.arcade.collide(obstacleGroup, platforms, bounce);
 			if(ninja.y>game.height){
 				die();
@@ -109,7 +103,7 @@ window.onload = function() {
      game.state.add("Play",play);
      game.state.start("Play");
 	function bounce(item,platform){
-		item.body.velocity.y = -1 * this.startheight;
+		item.body.velocity.y = -500;
 	}
 	function updateScore(){
 		scoreText.text = "Score: "+score+"\nBest: "+topScore;	
@@ -254,7 +248,7 @@ window.onload = function() {
 			addNewPoles();
 		}
 	}
-    Obstacle = function (game, x, y, obstacleNumber, startheight) {
+    Obstacle = function (game, x, y, obstacleNumber) {
 		if (obstacleNumber == 1) {
             Phaser.Sprite.call(this, game, x, y - 10, "couch");
         } else if (obstacleNumber == 2) {
@@ -264,9 +258,7 @@ window.onload = function() {
         } else if (obstacleNumber == 4) {
             Phaser.Sprite.call(this, game, x, y, "test");
         } else if (obstacleNumber == 5) {
-            startheight = y-(75*game.rnd.between(1,3));
-            Phaser.Sprite.call(this, game, x, startheight,"ball");
-            
+            Phaser.Sprite.call(this, game, x, y-50-(25*game.rnd.between(0,3)), "ball");
         }
         if(obstacleNumber==5)
         {
@@ -274,6 +266,7 @@ window.onload = function() {
             this.body.gravity.y = 500;
             this.body.immovable = false;
             this.body.velocity.x = obstacleSpeed;
+            this.body.velocity.y = 50;
             this.giveScore = true;
         }
         else
