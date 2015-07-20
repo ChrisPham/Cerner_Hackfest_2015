@@ -17,13 +17,14 @@ window.onload = function() {
     var obstacleGroup;
      var lowerObstacleInterval = game.rnd.between(2000,5000);
      var upperObstacleInterval = game.rnd.between(7000,9000);
+     var ballObstacleInterval = game.rnd.between(10000,10000);
 	var platforms;
      var minPoleGap = 100;
      var maxPoleGap = 300; 
      var ninjaJumping;
      var ninjaFallingDown;     
      var obstacleSpeed = -200;
-     var poleSpeed = -550;
+     var poleSpeed = -300;
      var play = function(game){}     
      play.prototype = {
 		preload:function(){
@@ -71,10 +72,12 @@ window.onload = function() {
 			addPole(80);
 			game.time.events.loop(lowerObstacleInterval, addObstacleL);
             game.time.events.loop(upperObstacleInterval, addObstacleH);
+            game.time.events.loop(ballObstacleInterval, addObstacleBall);
             ninja.animations.add('right', [1, 2, 3, 4, 5], 15, true);
             ninja.scale.setTo(.65,.65);
 			addObstacleL();
             addObstacleH();
+            addObstacleBall();
 			platforms = game.add.group();
 			//  We will enable physics for any object that is created in this group
 			platforms.enableBody = true;
@@ -90,6 +93,7 @@ window.onload = function() {
             game.physics.arcade.collide(ninja, obstacleGroup, die);
 			game.physics.arcade.collide(ninja, platforms, onGround);
 			game.physics.arcade.collide(ball, platforms, bounce);
+            game.physics.arcade.collide(obstacleGroup, platforms, bounce);
 			if(ninja.y>game.height){
 				die();
 			}
@@ -104,8 +108,8 @@ window.onload = function() {
 	}     
      game.state.add("Play",play);
      game.state.start("Play");
-	function bounce(){
-		ball.body.velocity.y = -800;
+	function bounce(item,platform){
+		item.body.velocity.y = -500;
 	}
 	function updateScore(){
 		scoreText.text = "Score: "+score+"\nBest: "+topScore;	
@@ -170,6 +174,13 @@ window.onload = function() {
 		game.add.existing(obstacle);
 		obstacleGroup.add(obstacle);
 	}
+    function addObstacleBall(){
+        //var obstacleNumber = game.rnd.between(1,2);
+        //if (2 == obstacleNumber) {
+            var obstacle = new Obstacle(game,1000,game.world.height-50,5);
+            game.add.existing(obstacle);
+            obstacleGroup.add(obstacle);
+    }
 	function increaseObstacleCount() {
 
 	}
@@ -183,7 +194,7 @@ window.onload = function() {
 		localStorage.setItem("topFlappyScore",Math.max(score,topScore));	
 		game.state.start("Play");
 		obstacleSpeed = -200;
-		poleSpeed = -550;
+		poleSpeed = -300;
 	}
 	function onGround(n,g) {
 		if(n.y <= g.y + n.y/2) {
@@ -252,11 +263,25 @@ window.onload = function() {
             Phaser.Sprite.call(this, game, x, y - 50, "person2");
         } else if (obstacleNumber == 4) {
             Phaser.Sprite.call(this, game, x, y, "test");
+        } else if (obstacleNumber == 5) {
+            Phaser.Sprite.call(this, game, x, y-50-(25*game.rnd.between(0,3)), "ball");
         }
-        game.physics.enable(this, Phaser.Physics.ARCADE);
-		this.body.immovable = true;
-        this.body.velocity.x = obstacleSpeed;
-        this.giveScore = true;
+        if(obstacleNumber==5)
+        {
+            game.physics.enable(this, Phaser.Physics.ARCADE);
+            this.body.gravity.y = 500;
+            this.body.immovable = false;
+            this.body.velocity.x = obstacleSpeed;
+            this.body.velocity.y = 50;
+            this.giveScore = true;
+        }
+        else
+        {
+            game.physics.enable(this, Phaser.Physics.ARCADE);
+		    this.body.immovable = true;
+            this.body.velocity.x = obstacleSpeed;
+            this.giveScore = true;
+        }
 	};
 	
 	Obstacle.prototype = Object.create(Phaser.Sprite.prototype);
