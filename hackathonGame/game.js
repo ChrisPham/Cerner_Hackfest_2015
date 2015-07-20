@@ -57,7 +57,7 @@ window.onload = function() {
 			game.stage.backgroundColor = "#87CEEB";
             //background = game.add.tileSprite(0, 0, 1000, 600, "background");
 			game.physics.startSystem(Phaser.Physics.ARCADE);
-			ninja = game.add.sprite(game.width/2.15,0,"dude");
+			ninja = game.add.sprite(game.width/2 - game.width/4,0,"dude");
 			ninja.anchor.set(0.5);
 			ninja.lastPole = 1;
 			game.physics.arcade.enable(ninja);
@@ -152,10 +152,10 @@ window.onload = function() {
     function addObstacleL(){
         var obstacleNumber = game.rnd.between(1,2);
 		if (obstacleNumber == 2) {
-            var obstacle = new Obstacle(game,1000,game.world.height - 75, obstacleNumber);
+            var obstacle = new Obstacle(game,1000,game.world.height - 55, obstacleNumber);
             game.add.existing(obstacle);
             obstacleGroup.add(obstacle);
-            var obstacle2 = new Obstacle(game,945,game.world.height - 78, obstacleNumber + 1);
+            var obstacle2 = new Obstacle(game,960,game.world.height - 57, obstacleNumber + 1);
             game.add.existing(obstacle2);
             obstacleGroup.add(obstacle2);
         } else {
