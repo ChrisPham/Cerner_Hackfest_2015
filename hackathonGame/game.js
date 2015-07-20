@@ -65,10 +65,6 @@ window.onload = function() {
 			ninja.body.gravity.y = ninjaGravity;
 			game.input.onDown.add(prepareToJump, this);
 			
-			ball = game.add.sprite(game.width/2,0,"ball");
-			game.physics.arcade.enable(ball);
-			ball.body.gravity.y = 800;
-			
 			addPole(80);
 			game.time.events.loop(lowerObstacleInterval, addObstacleL);
             game.time.events.loop(upperObstacleInterval, addObstacleH);
@@ -77,7 +73,6 @@ window.onload = function() {
             ninja.scale.setTo(.65,.65);
 			addObstacleL();
             addObstacleH();
-            addObstacleBall();
 			platforms = game.add.group();
 			//  We will enable physics for any object that is created in this group
 			platforms.enableBody = true;
@@ -92,7 +87,6 @@ window.onload = function() {
 			//game.physics.arcade.collide(ninja, poleGroup, checkLanding);
             game.physics.arcade.collide(ninja, obstacleGroup, die);
 			game.physics.arcade.collide(ninja, platforms, onGround);
-			game.physics.arcade.collide(ball, platforms, bounce);
             game.physics.arcade.collide(obstacleGroup, platforms, bounce);
 			if(ninja.y>game.height){
 				die();
