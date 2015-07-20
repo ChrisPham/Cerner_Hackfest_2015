@@ -103,7 +103,7 @@ window.onload = function() {
      game.state.add("Play",play);
      game.state.start("Play");
 	function bounce(item,platform){
-		item.body.velocity.y = -500;
+		item.body.velocity.y = -1 * this.startheight;
 	}
 	function updateScore(){
 		scoreText.text = "Score: "+score+"\nBest: "+topScore;	
@@ -248,7 +248,7 @@ window.onload = function() {
 			addNewPoles();
 		}
 	}
-    Obstacle = function (game, x, y, obstacleNumber) {
+    Obstacle = function (game, x, y, obstacleNumber, startheight) {
 		if (obstacleNumber == 1) {
             Phaser.Sprite.call(this, game, x, y - 10, "couch");
         } else if (obstacleNumber == 2) {
@@ -258,7 +258,9 @@ window.onload = function() {
         } else if (obstacleNumber == 4) {
             Phaser.Sprite.call(this, game, x, y, "test");
         } else if (obstacleNumber == 5) {
-            Phaser.Sprite.call(this, game, x, y-50-(25*game.rnd.between(0,3)), "ball");
+            startheight = y-(75*game.rnd.between(1,3));
+            Phaser.Sprite.call(this, game, x, startheight,"ball");
+            
         }
         if(obstacleNumber==5)
         {
@@ -266,7 +268,6 @@ window.onload = function() {
             this.body.gravity.y = 500;
             this.body.immovable = false;
             this.body.velocity.x = obstacleSpeed;
-            this.body.velocity.y = 50;
             this.giveScore = true;
         }
         else
